@@ -11,6 +11,8 @@ export const UseState = ({ nombre }) => {
         value: '',
         error: false,
         loading: false,
+        deleted: false,
+        confirmed: false
     })
 
 
@@ -20,37 +22,68 @@ export const UseState = ({ nombre }) => {
 
                 console.log(state)
 
-                if(state.value === SECURITY_CODE){
-                    setState({...state,loading:false, error: false})                    
-                }else{
-                    setState({...state,loading:false, error: true})   
-                }                
+                if (state.value === SECURITY_CODE) {
+                    setState({ ...state, loading: false, error: false, confirmed: true })
+                } else {
+                    setState({ ...state, loading: false, error: true, })
+                }
             }, 2000)
         }
     }, [state.loading])
 
 
-    return (
-        <div>
-            <h2>Eliminar {nombre}</h2>
-            <p>Por favor, escribe el código de seguridad</p>
-            {state.error && (
-                <p>El código es incorrecto</p>
-            )}
-            {state.loading && (
-                <p>Cargando...</p>
-            )}
-            <input 
-                placeholder='Codigo de seguridad' 
-                value={state.value}
-                onChange={(event) => {
-                    console.log(event.target.value)
-                    setState({value:event.target.value})  
-                }}
-            />
-            <button
-                onClick={() => {setState({...state,loading:true, error: false})  }}
-            >Comparar</button>
-        </div>
-    )
+
+    if (!state.deleted && !state.confirmed) {
+        return (
+            <div>
+                <h2>Eliminar {nombre}</h2>
+                <p>Por favor, escribe el código de seguridad</p>
+                {state.error && (
+                    <p>El código es incorrecto</p>
+                )}
+                {state.loading && (
+                    <p>Cargando...</p>
+                )}
+                <input
+                    placeholder='Codigo de seguridad'
+                    value={state.value}
+                    onChange={(event) => {
+                        setState({ value: event.target.value })
+                    }}
+                />
+                <button
+                    onClick={() => { setState({ ...state, loading: true, error: false }) }}
+                >Comparar</button>
+            </div>
+        )
+
+    } else if (!state.deleted && state.confirmed) {
+        return (
+            <>
+                <p>Estás seguro que quieres eliminar?</p>
+                <button
+                    onClick={() => {
+                        setState({ ...state, deleted: true, value: '' })
+                    }}
+                >Si
+                </button>
+                <button
+                    onClick={() => {
+                        setState({ ...state, confirmed: false, value: '' })
+                    }}
+                >No</button>
+            </>
+        )
+    } else {
+        return (
+            <>
+                <p>Eliminado con éxito..</p>
+                <button
+                    onClick={() => {
+                        setState({ ...state,deleted: false, confirmed: false, value: '' })
+                    }}
+                >Resetear</button>
+            </>
+        )
+    }
 }
