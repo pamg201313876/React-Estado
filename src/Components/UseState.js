@@ -16,17 +16,43 @@ export const UseState = ({ nombre }) => {
     })
 
 
+    const onConfirm = () => {
+        setState({ ...state, loading: false, error: false, confirmed: true })
+    }
+
+    const onError = () => {
+        setState({ ...state, loading: false, error: true, })
+    }
+
+    const onWrite = (cadena) => {
+        setState({ ...state, value: cadena })
+    }
+
+    const onCheck = () => {
+        setState({ ...state, loading: true, error: false })
+    }
+    
+    const onDelete = () => {
+        setState({ ...state, deleted: true, value: '' })
+    }   
+    
+
+    const onReset = () => {
+        setState({ ...state,deleted: false, confirmed: false, value: '' })
+    }
+
+    
+
     React.useEffect(() => {
         if (state.loading) {
+
             setTimeout(() => {
-
-                console.log(state)
-
                 if (state.value === SECURITY_CODE) {
-                    setState({ ...state, loading: false, error: false, confirmed: true })
+                    onConfirm();
                 } else {
-                    setState({ ...state, loading: false, error: true, })
+                   onError();
                 }
+                
             }, 2000)
         }
     }, [state.loading])
@@ -47,12 +73,10 @@ export const UseState = ({ nombre }) => {
                 <input
                     placeholder='Codigo de seguridad'
                     value={state.value}
-                    onChange={(event) => {
-                        setState({ value: event.target.value })
-                    }}
+                    onChange={(event) => onWrite(event.target.value)}
                 />
                 <button
-                    onClick={() => { setState({ ...state, loading: true, error: false }) }}
+                    onClick={onCheck}
                 >Comparar</button>
             </div>
         )
@@ -62,15 +86,11 @@ export const UseState = ({ nombre }) => {
             <>
                 <p>Estás seguro que quieres eliminar?</p>
                 <button
-                    onClick={() => {
-                        setState({ ...state, deleted: true, value: '' })
-                    }}
+                    onClick={onDelete}
                 >Si
                 </button>
                 <button
-                    onClick={() => {
-                        setState({ ...state, confirmed: false, value: '' })
-                    }}
+                    onClick={onReset}
                 >No</button>
             </>
         )
@@ -79,9 +99,7 @@ export const UseState = ({ nombre }) => {
             <>
                 <p>Eliminado con éxito..</p>
                 <button
-                    onClick={() => {
-                        setState({ ...state,deleted: false, confirmed: false, value: '' })
-                    }}
+                    onClick={onReset}
                 >Resetear</button>
             </>
         )
