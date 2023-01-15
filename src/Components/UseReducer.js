@@ -8,16 +8,16 @@ export const UseReducer = ({ nombre }) => {
     const [state, dispatch] = React.useReducer(reducer, initialState);
 
     React.useEffect(() => {
-        
+
         if (state.loading) {
 
             setTimeout(() => {
                 if (state.value === SECURITY_CODE) {
-                    dispatch({type: 'CONFIRM'})
+                    dispatch({ type: actionTypes.CONFIRM })
                 } else {
-                    dispatch({type: 'ERROR'})
+                    dispatch({ type: actionTypes.ERROR })
                 }
-                
+
             }, 2000)
         }
     }, [state.loading])
@@ -38,10 +38,10 @@ export const UseReducer = ({ nombre }) => {
                 <input
                     placeholder='Codigo de seguridad'
                     value={state.value}
-                    onChange={(event) => {dispatch({type: 'WRITE', payload: event.target.value })}}
+                    onChange={(event) => { dispatch({ type: actionTypes.WRITE, payload: event.target.value }) }}
                 />
                 <button
-                    onClick={() => {dispatch({type: 'CHECK'})}}
+                    onClick={() => { dispatch({ type: actionTypes.CHECK }) }}
                 >Comparar</button>
             </div>
         )
@@ -51,11 +51,11 @@ export const UseReducer = ({ nombre }) => {
             <>
                 <p>Estás seguro que quieres eliminar?</p>
                 <button
-                    onClick={() => {dispatch({type: 'DELETE'})}}
+                    onClick={() => { dispatch({ type: actionTypes.DELETE }) }}
                 >Si
                 </button>
                 <button
-                    onClick={ () => {dispatch({type: 'RESET'})}}
+                    onClick={() => { dispatch({ type: actionTypes.RESET }) }}
                 >No</button>
             </>
         )
@@ -64,7 +64,7 @@ export const UseReducer = ({ nombre }) => {
             <>
                 <p>Eliminado con éxito..</p>
                 <button
-                    onClick={ ()=> {dispatch({type: 'RESET'})}}
+                    onClick={() => { dispatch({ type: actionTypes.RESET }) }}
                 >Resetear</button>
             </>
         )
@@ -80,28 +80,37 @@ const initialState = {
     confirmed: false
 };
 
+const actionTypes = {
+    CONFIRM: 'CONFIRM',
+    ERROR: 'ERROR',
+    WRITE: 'WRITE',
+    CHECK: 'CHECK',
+    DELETE: 'DELETE',
+    RESET: 'RESET'
+}
+
 
 const reducer = (state = initialState, { type, payload }) => {
-    
+
     switch (type) {
 
-        case 'CONFIRM':
+        case actionTypes.CONFIRM:
             return { ...state, loading: false, error: false, confirmed: true }
 
-        case 'ERROR':
+        case actionTypes.ERROR:
             return { ...state, loading: false, error: true, };
 
-        case 'WRITE':
+        case actionTypes.WRITE:
             return { ...state, value: payload }
 
-        case 'CHECK':
+        case actionTypes.CHECK:
             return { ...state, loading: true, error: false }
 
-        case 'DELETE':
+        case actionTypes.DELETE:
             return { ...state, deleted: true, value: '' }
 
-        case 'RESET':
-            return { ...state,deleted: false, confirmed: false, value: '' }
+        case actionTypes.RESET:
+            return { ...state, deleted: false, confirmed: false, value: '' }
 
         default:
             return state
